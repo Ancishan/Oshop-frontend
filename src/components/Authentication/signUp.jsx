@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import img1 from '../../assets/image1.jpg';
 import useAuth from '../../hooks/useAuth';
 import { imageUpload } from '../../Api/Utils';
@@ -20,7 +20,7 @@ const SignUp = () => {
             setLoading(true);
             const photoURL = await imageUpload(image);
             const result = await createUser(email, password);
-            await updateUserProfile(name, photoURL);
+            // await updateUserProfile(name, photoURL);
 
             // Notify the user to check their email for verification
             toast.success('Signup Successful! Please check your email to verify your account.');
@@ -32,7 +32,7 @@ const SignUp = () => {
                 photoURL: photoURL,
             });
 
-            navigate('/login');
+            navigate('/signIn');
         } catch (err) {
             console.log(err);
             toast.error(err.message);
@@ -129,8 +129,8 @@ const SignUp = () => {
                     </form>
 
                     <p className="mt-4 text-center text-sm">
-                        Already have an account? <a href="/login" className="text-primary">Log In</a>
-                    </p>
+                        Already have an account? <Link to='/signIn'>Login</Link>
+                        </p>
                 </div>
             </div>
         </div>
