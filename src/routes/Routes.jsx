@@ -4,6 +4,7 @@ import HomePage from "../pages/HomePage";
 import SignUp from "../components/Authentication/signUp";
 import SignIn from "../components/Authentication/signIn";
 
+
 export const router = createBrowserRouter([
     {
       path: "/",
@@ -18,7 +19,7 @@ export const router = createBrowserRouter([
           element:<SignUp></SignUp>
         },
         {
-          path:'/signIn',
+          path:'/login',
           element:<SignIn></SignIn>
         },
       ]

@@ -6,7 +6,7 @@ import toast from 'react-hot-toast'; // Assuming you're using this for notificat
 
 const SignUp = () => {
     const navigate = useNavigate();
-    const { createUser, signInWithGoogle, loading, setLoading, setUser } = useAuth();
+    const { createUser, signInWithGoogle,updateUserProfile, loading, setLoading, setUser } = useAuth();
     
     const handleSubmit = async e => {
         e.preventDefault();
@@ -15,32 +15,19 @@ const SignUp = () => {
         const email = form.email.value;
         const password = form.password.value;
         const image = form.image.files[0];
-
+      
         try {
-            setLoading(true);
-            const photoURL = await imageUpload(image);
-            const result = await createUser(email, password);
-            // await updateUserProfile(name, photoURL);
-
-            // Notify the user to check their email for verification
-            toast.success('Signup Successful! Please check your email to verify your account.');
-
-            // Manually update the user state if needed
-            setUser({
-                ...result.user,
-                displayName: name,
-                photoURL: photoURL,
-            });
-
-            navigate('/signIn');
+          const photoURL = await imageUpload(image);
+          const result = await createUser(email, password);
+          await updateUserProfile(name, photoURL);
+          toast.success('Signup Successful! Please check your email to verify your account.');
+          navigate('/login');
         } catch (err) {
-            console.log(err);
-            toast.error(err.message);
-        } finally {
-            setLoading(false);
+          console.log(err);
+          toast.error(err?.message || 'Sign up failed');
         }
-    };
-
+      };
+      
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
             <h1 className="text-4xl font-bold text-center mb-8">OShopping for You</h1>

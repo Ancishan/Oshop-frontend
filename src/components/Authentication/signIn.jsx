@@ -10,23 +10,21 @@ const SignIn = () => {
         = useAuth();
 
         const handleSignIn = async e => {
-            e.preventDefault()
-            const form = e.target
-            const email = form.email.value
-            const password = form.password.value
-            console.log({ email, password })
+            e.preventDefault();
+            const form = e.target;
+            const email = form.email.value;
+            const password = form.password.value;
+          
             try {
-              const result = await signIn(email, password)
-              console.log(result)
-              navigate('/')
-              toast.success("sign in successfully")
+              const result = await signIn(email, password);
+              toast.success("Signed in successfully");
+              navigate('/');
+            } catch (err) {
+              console.log(err);
+              toast.error(err?.message || 'Sign in failed'); // Display the error message
             }
-            catch (err) {
-              console.log(err)
-              toast.error(err?.message)
-            }
-          }
-          if(user || loading) return
+          };
+          
     return (
         <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
             <div className="w-full max-w-sm sm:max-w-md p-6 space-y-6 rounded-xl shadow-lg bg-white">

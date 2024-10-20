@@ -1,18 +1,22 @@
+import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 
 
 const Navbar = () => {
     const {user, logOut} = useAuth();
+    const navigate = useNavigate();
 
     const handleLogOut = () => {
         logOut()
-        .then(() =>{})
+        .then(() =>{
+          navigate('/login')
+        })
         .catch(error => console.log(error))
     }
     return (
         <div className="navbar bg-base-100">
         <div className="flex-1">
-          <a className="text-amber-900 text-3xl font-bold">Oshopping</a>
+          <Link to='/' className="text-amber-900 text-3xl font-bold">Oshopping</Link>
         </div>
         <div className="flex-none">
           <div className="dropdown dropdown-end">
@@ -56,7 +60,10 @@ const Navbar = () => {
             <ul
               tabIndex={0}
               className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
-              <li>
+           
+              { user?(
+                <>
+                <li>
                 <a className="justify-between">
                   Profile
                   <span className="badge">New</span>
@@ -64,6 +71,16 @@ const Navbar = () => {
               </li>
               <li><a>Settings</a></li>
               <li><button onClick={handleLogOut}>Logout</button></li>
+                </>
+              ):(
+                <>
+                <li><Link to='/login'>SignIn</Link></li>
+                <li><Link to='/signUp'>SignUp</Link></li>
+                </>
+              )
+
+              }
+           
             </ul>
           </div>
         </div>
