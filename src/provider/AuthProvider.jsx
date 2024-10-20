@@ -1,6 +1,5 @@
 import { createContext, useEffect, useState } from "react";
-
-import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from 'firebase/auth'
+import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from 'firebase/auth';
 import { app } from "../firebase.config";
 import { GoogleAuthProvider } from "firebase/auth/web-extension";
 
@@ -12,93 +11,80 @@ const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    // Create a new user
     const createUser = async (email, password) => {
         setLoading(true);
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-
-            //send verification
-            await verifyEmail();
-            return userCredential;
+        return userCredential;
     };
 
-    const signIn = async (email, password) =>{
+    // Sign in an existing user
+    const signIn = async (email, password) => {
         setLoading(true);
         const result = await signInWithEmailAndPassword(auth, email, password);
-        const user = result.user;
-
-        // // check the email verified or not 
-
-        if(!user.emailVerified){
-            await signOut(auth);
-            throw new Error('Your Email is not verified. please verify Your email');   
-        }
         return result;
     };
 
-    const signInWithGoogle = () =>{
+    // Google sign-in
+    const signInWithGoogle = () => {
         setLoading(true);
         return signInWithPopup(auth, googleProvider);
     };
 
-    const resetPassword = email =>{
+    // Reset password
+    const resetPassword = (email) => {
         setLoading(true);
         return sendPasswordResetEmail(auth, email);
     };
 
-    const logOut = async () =>{
+    // Log out
+    const logOut = async () => {
         setLoading(true);
         return signOut(auth);
-
     };
 
-    const updateUserProfile = (user, profile) => {
-      return updateProfile(user, profile)
-          .then(() => {
-              // Update the user state after successfully updating the profile
-              setUser({ ...user, ...profile });
-          })
-          .catch((error) => {
-              console.error("Error updating profile: ", error);
-          });
-  }
-
-    const verifyEmail = () =>{
-        if(auth.currentUser){
-            return sendEmailVerification(auth.currentUser);
+    // Update user profile
+    const updateUserProfile = async (profile) => {
+        if (auth.currentUser) {
+            return updateProfile(auth.currentUser, profile)
+                .then(() => {
+                    setUser({ ...auth.currentUser, ...profile });
+                })
+                .catch((error) => {
+                    console.error("Error updating profile: ", error);
+                });
         }
     };
 
-    useEffect(() =>{
-        const unSubscribe = onAuthStateChanged(auth, currentUser =>{
+    // Listen for authentication state changes
+    useEffect(() => {
+        const unSubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
-            // if(currentUser){
-            //     getToken(currentUser.email);
-            // }
             setLoading(false);
         });
-        return () =>{
+        return () => {
             unSubscribe();
         };
     }, []);
 
     const authInfo = {
-        user, 
+        user,
         setUser,
         loading,
         setLoading,
         createUser,
         signIn,
         signInWithGoogle,
-        resetPassword, 
+        resetPassword,
         logOut,
-        verifyEmail,
         updateUserProfile
-        
-      
     };
 
     return (
-        <AuthContext.Provider value ={authInfo}>{children}</AuthContext.Provider>
+        <AuthContext.Provider value={authInfo}>
+            {children}
+        </AuthContext.Provider>
     );
 };
+
 export default AuthProvider;

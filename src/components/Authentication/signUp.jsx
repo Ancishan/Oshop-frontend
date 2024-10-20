@@ -2,32 +2,38 @@ import { Link, useNavigate } from 'react-router-dom';
 import img1 from '../../assets/image1.jpg';
 import useAuth from '../../hooks/useAuth';
 import { imageUpload } from '../../Api/Utils';
-import toast from 'react-hot-toast'; // Assuming you're using this for notifications
+import toast from 'react-hot-toast';
+import useAxiosPublic from '../../hooks/useAxiosPublc';
+import { useState } from 'react';
 
 const SignUp = () => {
     const navigate = useNavigate();
-    const { createUser, signInWithGoogle,updateUserProfile, loading, setLoading, setUser } = useAuth();
-    
-    const handleSubmit = async e => {
+    const axiosPublic = useAxiosPublic();
+    const { createUser, updateUserProfile } = useAuth();
+    // const [role, setRole] = useState('user')
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const form = e.target;
         const name = form.name.value;
         const email = form.email.value;
         const password = form.password.value;
         const image = form.image.files[0];
-      
+        const role = 'user';
+
         try {
-          const photoURL = await imageUpload(image);
-          const result = await createUser(email, password);
-          await updateUserProfile(name, photoURL);
-          toast.success('Signup Successful! Please check your email to verify your account.');
-          navigate('/login');
+            const photoURL = await imageUpload(image);
+            const result = await createUser(email, password);
+            await updateUserProfile({ displayName: name, photoURL });
+            await axiosPublic.post('/users', {name, email, role, photoURL});
+            toast.success('Signup Successful!');
+            navigate('/');
         } catch (err) {
-          console.log(err);
-          toast.error(err?.message || 'Sign up failed');
+            console.log(err);
+            toast.error(err?.message || 'Sign up failed');
         }
-      };
-      
+    };
+
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
             <h1 className="text-4xl font-bold text-center mb-8">OShopping for You</h1>
@@ -49,7 +55,6 @@ const SignUp = () => {
                             <input
                                 type="text"
                                 name="name"
-                                id="name"
                                 placeholder="Enter your name"
                                 className="input input-bordered w-full"
                                 required
@@ -63,7 +68,6 @@ const SignUp = () => {
                             <input
                                 type="email"
                                 name="email"
-                                id="email"
                                 placeholder="Enter your email"
                                 className="input input-bordered w-full"
                                 required
@@ -78,7 +82,6 @@ const SignUp = () => {
                                 required
                                 type="file"
                                 name="image"
-                                id="image"
                                 accept="image/*"
                                 className="file-input file-input-bordered w-full"
                             />
@@ -116,8 +119,8 @@ const SignUp = () => {
                     </form>
 
                     <p className="mt-4 text-center text-sm">
-                        Already have an account? <Link to='/signIn'>Login</Link>
-                        </p>
+                        Already have an account? <Link to='/login'>Sign In</Link>
+                    </p>
                 </div>
             </div>
         </div>
