@@ -3,7 +3,7 @@ import img1 from '../../assets/image1.jpg';
 import useAuth from '../../hooks/useAuth';
 import { imageUpload } from '../../Api/Utils';
 import toast from 'react-hot-toast';
-import useAxiosPublic from '../../hooks/useAxiosPublc';
+import useAxiosPublic from '../../hooks/useAxiosPublic';
 import { useState } from 'react';
 
 const SignUp = () => {

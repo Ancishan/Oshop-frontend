@@ -1,9 +1,11 @@
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
+import useRole from "../../hooks/useRole";
 
 const Navbar = () => {
     const {user, logOut} = useAuth();
     const navigate = useNavigate();
+    const [role, isLoading] = useRole();
 
     const handleLogOut = () => {
         logOut()
@@ -71,12 +73,20 @@ const Navbar = () => {
                         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
                         {user ? (
                             <>
+                            {role === 'user' && (
                                 <li>
                                     <a className="justify-between">
                                         {user.displayName || "User"} {/* Use default text if displayName is undefined */}
                                        
                                     </a>
                                 </li>
+                            )}
+                            {role === 'admin' && (
+                                <li>
+                                    <h2>admin</h2>
+                                </li>
+                            )}
+                                
                                 
                                 <li><button onClick={handleLogOut}>Logout</button></li>
                             </>
